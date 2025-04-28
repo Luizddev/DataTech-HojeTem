@@ -1,72 +1,29 @@
-const API_KEY = '074dcd2c51aec706e23fe45e43bdb16e'; // Substitua com sua API key real
+const API_KEY = '074dcd2c51aec706e23fe45e43bdb16e'; 
 const BASE_URL = 'https://api.themoviedb.org/3';
+const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 
-async function getGenres() {
-  const res = await fetch(`${BASE_URL}/genre/movie/list?api_key=${API_KEY}&language=pt-BR`);
-  const data = await res.json();
-  return data.genres;
-}
+// Função para pegar filmes aleatórios
+async function loadRandomPosters() {
+  try {
+    const randomPage = Math.floor(Math.random() * 500) + 1;
+    const response = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=pt-BR&page=${randomPage}`);
+    const data = await response.json();
+    const movies = data.results.filter(movie => movie.poster_path); // só filmes com imagem
 
-async function searchMoviesByGenre(genreId) {
-  const res = await fetch(`${BASE_URL}/discover/movie?api_key=${API_KEY}&language=pt-BR&with_genres=${genreId}&sort_by=popularity.desc`);
-  const data = await res.json();
+    // Pega dois filmes aleatórios
+    const randomMovies = [
+      movies[Math.floor(Math.random() * movies.length)],
+      movies[Math.floor(Math.random() * movies.length)]
+    ];
 
-  // Embaralhar os resultados e pegar 7 diferentes
-  const shuffled = data.results.sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, 7);
-}
-
-function displayGenres(genres) {
-  const select = document.getElementById('genre-select');
-  select.innerHTML = '<option value="">Selecione um Gênero</option>';
-  genres.forEach(g => {
-    const option = document.createElement('option');
-    option.value = g.id;
-    option.textContent = g.name;
-    select.appendChild(option);
-  });
-}
-
-function displayMovies(movies) {
-  const container = document.getElementById('movies');
-  container.innerHTML = ''; // Limpa antes de exibir novos
-
-  if (movies.length === 0) {
-    container.innerHTML = '<p>Nenhum filme encontrado.</p>';
-    return;
+    // Atualiza as imagens
+    document.getElementById('img1').src = `${IMAGE_BASE_URL}${randomMovies[0].poster_path}`;
+    document.getElementById('img2').src = `${IMAGE_BASE_URL}${randomMovies[1].poster_path}`;
+    
+  } catch (error) {
+    console.error('Erro ao carregar filmes:', error);
   }
-
-  movies.forEach(movie => {
-    const div = document.createElement('div');
-    div.className = 'movie';
-    div.innerHTML = `
-          <img src="https://image.tmdb.org/t/p/w200/${movie.poster_path}" alt="${movie.title}">
-          <div class="movie-details">
-            <h3>${movie.title} (${movie.release_date?.slice(0, 4) || 'Sem ano'})</h3>
-            <p>${movie.overview || 'Sem sinopse disponível.'}</p>
-          </div>
-        `;
-    container.appendChild(div);
-  });
 }
 
-async function init() {
-  const genres = await getGenres();
-  displayGenres(genres);
-
-  document.getElementById('search-btn').addEventListener('click', async () => {
-    const genreId = document.getElementById('genre-select').value;
-    if (!genreId) {
-      alert('Selecione um gênero!');
-      return;
-    }
-
-    // Limpa antes mesmo da busca
-    document.getElementById('movies').innerHTML = '<p>Buscando filmes...</p>';
-
-    const movies = await searchMoviesByGenre(genreId);
-    displayMovies(movies);
-  });
-}
-
-init();
+// Executa ao carregar a página
+document.addEventListener('DOMContentLoaded', loadRandomPosters);
