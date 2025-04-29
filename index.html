@@ -38,10 +38,24 @@
     </select>
     <button id="search-btn">Buscar Filmes</button>
   </div>
+  <!--FIlmes-->
   <div class="container">
     <div id="cine">
       <div id="movies">
+
       </div>
+    </div>
+  </div>
+  <!--FIlmes-->
+
+  <!-- Modal -->
+  <div id="movie-modal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2 id="modal-title"></h2>
+      <img id="modal-poster" src="" alt="">
+      <p id="modal-overview"></p>
+      <p><strong>Lançamento:</strong> <span id="modal-release"></span></p>
     </div>
   </div>
 

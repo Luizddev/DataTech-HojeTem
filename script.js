@@ -15,7 +15,7 @@ async function searchMoviesByGenre(genreId) {
   const data = await res.json();
 
   const shuffled = data.results.sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, 20);
+  return shuffled.slice(0, 50);
 }
 
 // Mostrar gêneros no select
@@ -44,15 +44,18 @@ function displayMovies(movies) {
     const div = document.createElement('div');
     div.className = 'movie';
     div.innerHTML = `
-      <img src="https://image.tmdb.org/t/p/w200/${movie.poster_path}" alt="${movie.title}">
+      <img src="${IMAGE_BASE_URL}${movie.poster_path}" alt="${movie.title}">
       <div class="movie-details">
         <h3>${movie.title} (${movie.release_date?.slice(0, 4) || 'Sem ano'})</h3>
-        
       </div>
     `;
+
+    // Evento de clique para abrir o modal
+    div.addEventListener('click', () => openModal(movie));
     container.appendChild(div);
   });
 }
+
 
 // Mostrar imagens aleatórias nos banners (img1 e img2)
 async function loadRandomPosters() {
@@ -101,3 +104,24 @@ async function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+function openModal(movie) {
+  document.getElementById('modal-title').textContent = movie.title;
+  document.getElementById('modal-overview').textContent = movie.overview || 'Descrição não disponível.';
+  document.getElementById('modal-release').textContent = movie.release_date || 'Data não disponível';
+  document.getElementById('modal-poster').src = `${IMAGE_BASE_URL}${movie.poster_path}`;
+
+  document.getElementById('movie-modal').style.display = 'block';
+}
+
+function closeModal() {
+  document.getElementById('movie-modal').style.display = 'none';
+}
+
+// Fecha o modal ao clicar fora
+window.onclick = function (event) {
+  const modal = document.getElementById('movie-modal');
+  if (event.target === modal) {
+    closeModal();
+  }
+};
