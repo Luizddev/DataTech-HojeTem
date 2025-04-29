@@ -111,6 +111,7 @@ function openModal(movie) {
   document.getElementById('modal-release').textContent = movie.release_date || 'Data não disponível';
   document.getElementById('modal-poster').src = `${IMAGE_BASE_URL}${movie.poster_path}`;
 
+
   document.getElementById('movie-modal').style.display = 'block';
 }
 
