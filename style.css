@@ -12,11 +12,16 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: fixed;
+  z-index: 999;
 }
 
-#menus>h1 {
+#menus>a {
   margin: 20px;
+  color: #243a69;
   font-size: 15px;
+  font-size: 9px;
+  text-decoration: none;
 }
 
 #logo {
@@ -30,7 +35,7 @@ span {
 #cont {
   display: flex;
   background-color: black;
-  height: 100%;
+  height: 100vh;
   flex-direction: row-reverse;
   align-items: center;
   color: white;
@@ -48,7 +53,7 @@ span {
   position: relative;
   right: -160px;
   top: -30px;
-  z-index: 999;
+  z-index: 998;
   box-shadow: 5px 5px 20px rgba(255, 255, 255, 0.5);
 }
 
