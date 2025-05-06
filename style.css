@@ -103,6 +103,7 @@ button {
   margin: 10px;
   color: white;
   box-shadow: 5px 5px 20px rgba(255, 255, 255, 0.171);
+  cursor: pointer;
 }
 
 #movies {
@@ -112,7 +113,6 @@ button {
   height: 100%;
   width: 100%;
   margin: 20px;
-  cursor: pointer;
 }
 
 .modal {
@@ -189,8 +189,10 @@ button {
 
 #cine {
   display: flex;
+  flex-direction: column;
   margin-left: 10%;
   width: 80%;
+  height: 100vh;
 }
 
 .movie img {
@@ -255,4 +257,18 @@ button {
   height: 200px;
   width: 200px;
   background-color: black;
+}
+
+.rodape {
+  color: red;
+  background-color: white;
+  display: flex;
+  font-size: 7px;
+  justify-content: space-around;
+  text-align: center;
+}
+
+.rodape>h1 {
+  margin-bottom: -10px;
+  color: red;
 }
