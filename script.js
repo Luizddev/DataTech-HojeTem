@@ -1,8 +1,8 @@
-const BASE_URL = 'http://localhost:3000'; // Backend local
+const BASE_URL = fetch("/api/..."); // Backend local
 
 // Buscar gêneros
 async function fetchGenres() {
-  const res = await fetch(`${BASE_URL}/api/genres`);
+  const res = await fetch("/api/genres");
   const data = await res.json();
 
   const genres = Array.isArray(data) ? data : data.genres || []; // Ajuste para garantir que 'genres' seja um array
@@ -20,7 +20,7 @@ async function fetchGenres() {
 // Buscar filmes aleatórios para os banners
 async function loadRandomPosters() {
   try {
-    const res = await fetch(`${BASE_URL}/api/popular-movies`); // Usando a nova rota para filmes populares
+    const res = await fetch("/api/genres");
     const movies = await res.json();
 
     if (movies.length < 2) {
@@ -53,7 +53,7 @@ async function fetchMovies() {
   const genreId = document.getElementById('genre-select').value;
   if (!genreId) return alert('Selecione um gênero');
 
-  const res = await fetch(`${BASE_URL}/api/movies?genre=${genreId}`);
+  const res = await fetch("/api/genres");;
   const movies = await res.json();
 
   const container = document.getElementById('movies');
