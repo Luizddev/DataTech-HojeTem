@@ -1,5 +1,13 @@
 {
+  "name": "datatech-hojetem",
+  "version": "1.0.0",
+  "description": "Projeto Node.js com API TMDB",
+  "main": "back.js",
+  "scripts": {
+    "start": "node back.js"
+  },
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.5.0"
   }
 }

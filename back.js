@@ -6,7 +6,7 @@ const path = require('path');
 require('dotenv').config(); // Carrega variáveis do .env
 
 const API_KEY = process.env.CHAVE_API;
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 const basePath = __dirname;
 
