@@ -1,8 +1,8 @@
-const BASE_URL = fetch("/api/..."); // Backend local
+const BASE_URL = "https://datatech-cinema-em-casa.onrender.com/api"; // URL base do backend
 
 // Buscar gêneros
 async function fetchGenres() {
-  const res = await fetch("/api/genres");
+  const res = await fetch(`${BASE_URL}/genres`);
   if (!res.ok) throw new Error('Erro ao buscar gêneros');
   const data = await res.json();
 
@@ -21,7 +21,7 @@ async function fetchGenres() {
 // Buscar filmes aleatórios para os banners
 async function loadRandomPosters() {
   try {
-    const res = await fetch("/api/random-movies"); // Endpoint correto para filmes aleatórios
+    const res = await fetch(`${BASE_URL}/movies/random`); // Corrigido para o endpoint correto
     if (!res.ok) throw new Error('Erro ao carregar filmes aleatórios');
     const movies = await res.json();
 
@@ -55,7 +55,7 @@ async function fetchMovies() {
   const genreId = document.getElementById('genre-select').value;
   if (!genreId) return alert('Selecione um gênero');
 
-  const res = await fetch(`/api/movies?genre_id=${genreId}`); // Endpoint correto para filmes por gênero
+  const res = await fetch(`${BASE_URL}/movies?genre_id=${genreId}`); // Corrigido para o endpoint correto
   if (!res.ok) throw new Error('Erro ao buscar filmes');
   const movies = await res.json();
 
