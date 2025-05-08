@@ -3,7 +3,6 @@ const BASE_URL = "https://datatech-cinema-em-casa.onrender.com/api"; // URL base
 // Buscar filmes aleatórios para os banners
 async function loadRandomPosters() {
   try {
-    // Buscando filmes de um gênero específico, por exemplo, gênero de ID 878 (Sci-Fi)
     const genreId = 878; // Exemplo de gênero (Sci-Fi). Você pode mudar para outro gênero ou selecionar aleatoriamente.
     const res = await fetch(`${BASE_URL}/movies?genre=${genreId}`);  // Alterado para 'genre' em vez de 'genre_id'
     console.log(`URL chamada para filmes aleatórios: ${BASE_URL}/movies?genre=${genreId}`); // Log para verificar a URL
@@ -32,6 +31,27 @@ async function loadRandomPosters() {
 
   } catch (error) {
     console.error('Erro ao carregar posters aleatórios:', error);
+  }
+}
+
+// Buscar gêneros para preencher o select
+async function fetchGenres() {
+  try {
+    const res = await fetch(`${BASE_URL}/genres`);
+    if (!res.ok) throw new Error('Erro ao carregar gêneros');
+    const genres = await res.json();
+
+    // Preencher o select com os gêneros
+    const genreSelect = document.getElementById('genre-select');
+    genres.forEach(genre => {
+      const option = document.createElement('option');
+      option.value = genre.id;
+      option.textContent = genre.name;
+      genreSelect.appendChild(option);
+    });
+
+  } catch (error) {
+    console.error('Erro ao carregar gêneros:', error);
   }
 }
 
