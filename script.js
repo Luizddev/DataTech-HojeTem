@@ -21,7 +21,10 @@ async function fetchGenres() {
 // Buscar filmes aleatórios para os banners
 async function loadRandomPosters() {
   try {
-    const res = await fetch(`${BASE_URL}/movies/random`); // Corrigido para o endpoint correto
+    // Buscando filmes de um gênero específico, por exemplo, gênero de ID 878 (Sci-Fi)
+    const genreId = 878; // Exemplo de gênero (Sci-Fi). Você pode mudar para outro gênero ou selecionar aleatoriamente.
+    const res = await fetch(`${BASE_URL}/movies?genre_id=${genreId}`);
+    console.log(`URL chamada para filmes aleatórios: ${BASE_URL}/movies?genre_id=${genreId}`); // Log para verificar a URL
     if (!res.ok) throw new Error('Erro ao carregar filmes aleatórios');
     const movies = await res.json();
 
@@ -55,7 +58,7 @@ async function fetchMovies() {
   const genreId = document.getElementById('genre-select').value;
   if (!genreId) return alert('Selecione um gênero');
 
-  const res = await fetch(`${BASE_URL}/movies?genre_id=${genreId}`); // Corrigido para o endpoint correto
+  const res = await fetch(`${BASE_URL}/movies?genre_id=${genreId}`);
   if (!res.ok) throw new Error('Erro ao buscar filmes');
   const movies = await res.json();
 
