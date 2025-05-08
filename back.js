@@ -56,6 +56,7 @@ const server = http.createServer((req, res) => {
     }
 
     // API: buscar gêneros
+    // API: buscar gêneros
     else if (pathname === '/api/genres') {
         const apiUrl = `https://api.themoviedb.org/3/genre/movie/list?api_key=${API_KEY}&language=pt-BR`;
 
@@ -63,12 +64,21 @@ const server = http.createServer((req, res) => {
             let data = '';
             apiRes.on('data', chunk => data += chunk);
             apiRes.on('end', () => {
-                res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(data);
+                try {
+                    const json = JSON.parse(data);
+                    const genres = json.genres || []; // Garantir que seja um array
+
+                    // Enviar resposta como JSON
+                    res.writeHead(200, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify(genres));
+                } catch (error) {
+                    console.error('Erro ao processar dados de gêneros:', error);
+                    res.writeHead(500);
+                    res.end('Erro ao carregar os gêneros');
+                }
             });
         });
     }
-
     // API: buscar filmes por gênero
     else if (pathname === '/api/movies') {
         const genreId = parsedUrl.query.genre;
