@@ -1,38 +1,36 @@
 const BASE_URL = "https://datatech-cinema-em-casa.onrender.com/api"; // URL base do backend
+const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
+const TMDB_THUMB_BASE = "https://image.tmdb.org/t/p/w200";
+const DEFAULT_IMAGE = "path/to/default-image.jpg"; // Substitua por uma imagem local válida
 
 // Buscar filmes aleatórios para os banners
 async function loadRandomPosters() {
   try {
-    // Buscando filmes de um gênero específico, por exemplo, gênero de ID 878 (Sci-Fi)
-    const genreId = 878; // Exemplo de gênero (Sci-Fi). Você pode mudar para outro gênero ou selecionar aleatoriamente.
-    const res = await fetch(`${BASE_URL}/movies?genre=${genreId}`);  // Alterado para 'genre' em vez de 'genre_id'
-    console.log(`URL chamada para filmes aleatórios: ${BASE_URL}/movies?genre=${genreId}`); // Log para verificar a URL
+    const genreId = 878; // Gênero Sci-Fi como exemplo
+    const res = await fetch(`${BASE_URL}/movies?genre=${genreId}`);
+    console.log(`URL chamada: ${BASE_URL}/movies?genre=${genreId}`);
     if (!res.ok) throw new Error('Erro ao carregar filmes aleatórios');
     const movies = await res.json();
 
-    if (movies.length < 2) {
-      console.error('Não há filmes suficientes com poster nesta página.');
+    const validMovies = movies.filter(m => m.poster_path);
+    if (validMovies.length < 2) {
+      console.error('Filmes com poster insuficientes.');
       return;
     }
 
-    // Seleciona dois filmes aleatórios
-    const randomMovies = [
-      movies[Math.floor(Math.random() * movies.length)],
-      movies[Math.floor(Math.random() * movies.length)]
-    ];
+    const [movie1, movie2] = getTwoRandomItems(validMovies);
 
-    // Atualiza as imagens dos banners
-    document.getElementById('img1').src = randomMovies[0].poster_path
-      ? `https://image.tmdb.org/t/p/w500${randomMovies[0].poster_path}`
-      : 'path/to/default-image.jpg'; // Fallback para filmes sem poster
-
-    document.getElementById('img2').src = randomMovies[1].poster_path
-      ? `https://image.tmdb.org/t/p/w500${randomMovies[1].poster_path}`
-      : 'path/to/default-image.jpg'; // Fallback para filmes sem poster
-
+    document.getElementById('img1').src = `${TMDB_IMAGE_BASE}${movie1.poster_path}`;
+    document.getElementById('img2').src = `${TMDB_IMAGE_BASE}${movie2.poster_path}`;
   } catch (error) {
-    console.error('Erro ao carregar posters aleatórios:', error);
+    console.error('Erro ao carregar posters:', error);
   }
+}
+
+// Utilitário para pegar 2 filmes aleatórios sem repetição
+function getTwoRandomItems(array) {
+  const shuffled = array.sort(() => 0.5 - Math.random());
+  return [shuffled[0], shuffled[1]];
 }
 
 // Buscar gêneros
@@ -42,8 +40,14 @@ async function fetchGenres() {
     if (!res.ok) throw new Error('Erro ao carregar gêneros');
     const genres = await res.json();
 
-    // Preenche o select com os gêneros
+    if (!Array.isArray(genres)) {
+      console.error('Formato inválido para gêneros:', genres);
+      return;
+    }
+
     const select = document.getElementById('genre-select');
+    select.innerHTML = '<option value="">Selecione um gênero</option>';
+
     genres.forEach(genre => {
       const option = document.createElement('option');
       option.value = genre.id;
@@ -55,72 +59,70 @@ async function fetchGenres() {
   }
 }
 
-// Mostrar filmes no container
+// Buscar e exibir filmes
 async function fetchMovies() {
-  const genreId = document.getElementById('genre-select').value;
-  if (!genreId) return alert('Selecione um gênero');
+  try {
+    const genreId = document.getElementById('genre-select').value;
+    if (!genreId) return alert('Selecione um gênero');
 
-  const res = await fetch(`${BASE_URL}/movies?genre=${genreId}`);  // Alterado para 'genre' em vez de 'genre_id'
-  if (!res.ok) throw new Error('Erro ao buscar filmes');
-  const movies = await res.json();
+    const res = await fetch(`${BASE_URL}/movies?genre=${genreId}`);
+    if (!res.ok) throw new Error('Erro ao buscar filmes');
+    const movies = await res.json();
 
-  const container = document.getElementById('movies');
-  container.innerHTML = '';
+    const container = document.getElementById('movies');
+    container.innerHTML = '';
 
-  if (movies.length === 0) {
-    container.innerHTML = '<p>Nenhum filme encontrado.</p>';
-    return;
+    if (!movies.length) {
+      container.innerHTML = '<p>Nenhum filme encontrado.</p>';
+      return;
+    }
+
+    movies.forEach(movie => {
+      const div = document.createElement('div');
+      div.className = 'movie';
+      div.innerHTML = `
+        <img src="${movie.poster_path ? `${TMDB_THUMB_BASE}${movie.poster_path}` : DEFAULT_IMAGE}" alt="${movie.title}">
+        <div class="movie-details">
+          <h3>${movie.title} (${movie.release_date?.slice(0, 4) || 'Sem ano'})</h3>
+        </div>
+      `;
+      div.addEventListener('click', () => openModal(movie));
+      container.appendChild(div);
+    });
+  } catch (error) {
+    console.error('Erro ao buscar filmes:', error);
   }
-
-  // Exibe os filmes na página
-  movies.forEach(movie => {
-    const div = document.createElement('div');
-    div.className = 'movie';
-    div.innerHTML = `
-      <img src="${movie.poster_path ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` : 'path/to/default-image.jpg'}" alt="${movie.title}">
-      <div class="movie-details">
-        <h3>${movie.title} (${movie.release_date?.slice(0, 4) || 'Sem ano'})</h3>
-      </div>
-    `;
-
-    // Evento de clique para abrir o modal
-    div.addEventListener('click', () => openModal(movie));
-    container.appendChild(div);
-  });
 }
 
-// Inicializar tudo
-async function init() {
-  await loadRandomPosters(); // Carregar posters aleatórios ao carregar a página
-  await fetchGenres(); // Carregar gêneros para o select
-
-  // Evento de busca ao clicar no botão
-  document.getElementById('search-btn').addEventListener('click', fetchMovies);
-}
-
-document.addEventListener('DOMContentLoaded', init);
-
-// Função para abrir o modal com detalhes do filme
+// Modal
 function openModal(movie) {
   document.getElementById('modal-title').textContent = movie.title;
   document.getElementById('modal-overview').textContent = movie.overview || 'Descrição não disponível.';
   document.getElementById('modal-release').textContent = movie.release_date || 'Data não disponível';
   document.getElementById('modal-poster').src = movie.poster_path
-    ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-    : 'path/to/default-image.jpg'; // Fallback para filmes sem poster
+    ? `${TMDB_IMAGE_BASE}${movie.poster_path}`
+    : DEFAULT_IMAGE;
 
   document.getElementById('movie-modal').style.display = 'block';
 }
 
-// Função para fechar o modal
 function closeModal() {
   document.getElementById('movie-modal').style.display = 'none';
 }
 
-// Fecha o modal ao clicar fora
-window.onclick = function (event) {
+// Fechar modal ao clicar fora
+window.addEventListener('click', event => {
   const modal = document.getElementById('movie-modal');
   if (event.target === modal) {
     closeModal();
   }
-};
+});
+
+// Inicialização
+async function init() {
+  await loadRandomPosters();
+  await fetchGenres();
+  document.getElementById('search-btn').addEventListener('click', fetchMovies);
+}
+
+document.addEventListener('DOMContentLoaded', init);
