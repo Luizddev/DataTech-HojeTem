@@ -68,6 +68,8 @@ span {
 
 #texto {
   width: 400px;
+  font-size: 18px;
+  font-weight: 600;
 }
 
 #menus {
