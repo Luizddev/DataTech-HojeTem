@@ -30,7 +30,7 @@ const server = http.createServer((req, res) => {
     }
 
     // Servir arquivos estáticos (CSS, JS, imagens, etc.)
-    else if (pathname.match(/\.(css|js|png|jpg|jpeg|gif)$/)) {
+    else if (pathname.match(/\.(css|js|png|jpg|jpeg|gif|ico)$/)) {
         const filePath = path.join(basePath, decodeURIComponent(pathname));
         const ext = path.extname(filePath).toLowerCase();
 
