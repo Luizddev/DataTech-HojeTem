@@ -40,7 +40,8 @@ const server = http.createServer((req, res) => {
             '.png': 'image/png',
             '.jpg': 'image/jpeg',
             '.jpeg': 'image/jpeg',
-            '.gif': 'image/gif'
+            '.gif': 'image/gif',
+            '.ico': 'image/ico'
         };
 
         fs.readFile(filePath, (err, content) => {
